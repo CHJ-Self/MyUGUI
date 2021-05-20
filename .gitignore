@@ -1,0 +1,11 @@
+/.vs
+/Library
+/Logs
+/Obj
+/Packages
+/ProjectSettings
+/Temp
+/UserSettings
+Assembly-CSharp.csproj
+Assembly-CSharp-Editor.csproj
+MyUGUI.sln
