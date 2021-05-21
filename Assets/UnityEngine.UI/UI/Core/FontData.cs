@@ -54,6 +54,9 @@ namespace UnityEngine.UI
         [SerializeField]
         private float m_LineSpacing;
 
+        [SerializeField]
+        private float m_WordSpacing;
+
         /// <summary>
         /// Get a font data with sensible defaults.
         /// </summary>
@@ -65,6 +68,7 @@ namespace UnityEngine.UI
                 {
                     m_FontSize  = 14,
                     m_LineSpacing = 1f,
+                    m_WordSpacing = 0f,
                     m_FontStyle = FontStyle.Normal,
                     m_BestFit = false,
                     m_MinSize = 10,
@@ -188,6 +192,12 @@ namespace UnityEngine.UI
         {
             get { return m_LineSpacing; }
             set { m_LineSpacing = value; }
+        }
+
+        public float wordSpacing
+        {
+            get { return m_WordSpacing; }
+            set { m_WordSpacing = value; }
         }
 
         void ISerializationCallbackReceiver.OnBeforeSerialize()
