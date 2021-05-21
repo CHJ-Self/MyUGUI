@@ -1018,6 +1018,10 @@ namespace UnityEngine.UI
 
             toFill.Clear();
 
+            //改为手动增加顶点和三角面
+            AddVertexAndLine(toFill, s_VertScratch, s_UVScratch, m_FillCenter, color);
+
+            /*
             for (int x = 0; x < 3; ++x)
             {
                 int x2 = x + 1;
@@ -1038,6 +1042,7 @@ namespace UnityEngine.UI
                         new Vector2(s_UVScratch[x2].x, s_UVScratch[y2].y));
                 }
             }
+            */
         }
 
         /// <summary>
@@ -1285,6 +1290,53 @@ namespace UnityEngine.UI
                     AddQuad(toFill, new Vector2(xMin, yMin) + rect.position, new Vector2(xMax, yMax) + rect.position, color, Vector2.Scale(uvMin, uvScale), Vector2.Scale(uvMax, uvScale));
                 }
             }
+        }
+
+        static void AddVertexAndLine(VertexHelper vertexHelper, Vector2[] s_VertScratch, Vector2[] s_UVScratch, bool m_FillCenter, Color32 color)
+        {
+            vertexHelper.AddVert(new Vector3(s_VertScratch[0].x, s_VertScratch[3].y), color, new Vector2(s_UVScratch[0].x, s_UVScratch[3].y));
+            vertexHelper.AddVert(new Vector3(s_VertScratch[1].x, s_VertScratch[3].y), color, new Vector2(s_UVScratch[1].x, s_UVScratch[3].y));
+            vertexHelper.AddVert(new Vector3(s_VertScratch[2].x, s_VertScratch[3].y), color, new Vector2(s_UVScratch[2].x, s_UVScratch[3].y));
+            vertexHelper.AddVert(new Vector3(s_VertScratch[3].x, s_VertScratch[3].y), color, new Vector2(s_UVScratch[3].x, s_UVScratch[3].y));
+
+            vertexHelper.AddVert(new Vector3(s_VertScratch[0].x, s_VertScratch[2].y), color, new Vector2(s_UVScratch[0].x, s_UVScratch[2].y));
+            vertexHelper.AddVert(new Vector3(s_VertScratch[1].x, s_VertScratch[2].y), color, new Vector2(s_UVScratch[1].x, s_UVScratch[2].y));
+            vertexHelper.AddVert(new Vector3(s_VertScratch[2].x, s_VertScratch[2].y), color, new Vector2(s_UVScratch[2].x, s_UVScratch[2].y));
+            vertexHelper.AddVert(new Vector3(s_VertScratch[3].x, s_VertScratch[2].y), color, new Vector2(s_UVScratch[3].x, s_UVScratch[2].y));
+
+            vertexHelper.AddVert(new Vector3(s_VertScratch[0].x, s_VertScratch[1].y), color, new Vector2(s_UVScratch[0].x, s_UVScratch[1].y));
+            vertexHelper.AddVert(new Vector3(s_VertScratch[1].x, s_VertScratch[1].y), color, new Vector2(s_UVScratch[1].x, s_UVScratch[1].y));
+            vertexHelper.AddVert(new Vector3(s_VertScratch[2].x, s_VertScratch[1].y), color, new Vector2(s_UVScratch[2].x, s_UVScratch[1].y));
+            vertexHelper.AddVert(new Vector3(s_VertScratch[3].x, s_VertScratch[1].y), color, new Vector2(s_UVScratch[3].x, s_UVScratch[1].y));
+
+            vertexHelper.AddVert(new Vector3(s_VertScratch[0].x, s_VertScratch[0].y), color, new Vector2(s_UVScratch[0].x, s_UVScratch[0].y));
+            vertexHelper.AddVert(new Vector3(s_VertScratch[1].x, s_VertScratch[0].y), color, new Vector2(s_UVScratch[1].x, s_UVScratch[0].y));
+            vertexHelper.AddVert(new Vector3(s_VertScratch[2].x, s_VertScratch[0].y), color, new Vector2(s_UVScratch[2].x, s_UVScratch[0].y));
+            vertexHelper.AddVert(new Vector3(s_VertScratch[3].x, s_VertScratch[0].y), color, new Vector2(s_UVScratch[3].x, s_UVScratch[0].y));
+
+            vertexHelper.AddTriangle(4, 0, 1);
+            vertexHelper.AddTriangle(1, 5, 4);
+            vertexHelper.AddTriangle(5, 1, 2);
+            vertexHelper.AddTriangle(2, 6, 5);
+            vertexHelper.AddTriangle(6, 2, 3);
+            vertexHelper.AddTriangle(3, 7, 6);
+            vertexHelper.AddTriangle(8, 4, 5);
+            vertexHelper.AddTriangle(5, 9, 8);
+
+            if (m_FillCenter)
+            {
+                vertexHelper.AddTriangle(9, 5, 6);
+                vertexHelper.AddTriangle(6, 10, 9);
+            }
+
+            vertexHelper.AddTriangle(10, 6, 7);
+            vertexHelper.AddTriangle(7, 11, 10);
+            vertexHelper.AddTriangle(12, 8, 9);
+            vertexHelper.AddTriangle(9, 13, 12);
+            vertexHelper.AddTriangle(13, 9, 10);
+            vertexHelper.AddTriangle(10, 14, 13);
+            vertexHelper.AddTriangle(14, 10, 11);
+            vertexHelper.AddTriangle(11, 15, 14);
         }
 
         static void AddQuad(VertexHelper vertexHelper, Vector3[] quadPositions, Color32 color, Vector3[] quadUVs)
