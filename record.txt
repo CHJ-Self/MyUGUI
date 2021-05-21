@@ -1,0 +1,3 @@
+1、增加了LayoutElement两个属性：maxWidth和maxHeight
+2、优化了Image的sliced模式，减少顶点数的增加，每一个Sliced模式的图片可减少20个顶点数
+3、增加了RawImage的Set UVRect Value按钮，可根据当前节点宽高设置UVRect的属性

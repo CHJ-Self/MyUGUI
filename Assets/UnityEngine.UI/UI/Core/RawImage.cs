@@ -129,6 +129,13 @@ namespace UnityEngine.UI
             }
         }
 
+        public void SetUVRectValues()
+        {
+            m_UVRect.width = rectTransform.sizeDelta.x / mainTexture.width;
+            m_UVRect.height = rectTransform.sizeDelta.y / mainTexture.height;
+            SetVerticesDirty();
+        }
+
         protected override void OnPopulateMesh(VertexHelper vh)
         {
             Texture tex = mainTexture;

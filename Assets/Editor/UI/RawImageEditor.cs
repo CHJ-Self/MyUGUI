@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEditor.AnimatedValues;
+using System.Linq;
 
 namespace UnityEditor.UI
 {
@@ -18,6 +20,15 @@ namespace UnityEditor.UI
         SerializedProperty m_UVRect;
         GUIContent m_UVRectContent;
 
+        GUIContent m_SetUVRectButtonContent;
+        AnimBool m_SetUVRect;
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            m_SetUVRect.valueChanged.RemoveListener(Repaint);
+        }
+
         protected override void OnEnable()
         {
             base.OnEnable();
@@ -31,6 +42,12 @@ namespace UnityEditor.UI
             m_UVRect            = serializedObject.FindProperty("m_UVRect");
 
             SetShowNativeSize(true);
+
+            //增加根据当前节点宽高设置UVRect属性
+            m_SetUVRectButtonContent = EditorGUIUtility.TrTextContent("Set UVRect Value", "Sets the values to UVRect.");
+            m_SetUVRect = new AnimBool(true);
+            m_SetUVRect.valueChanged.AddListener(Repaint);
+            SetUVRect(true);
         }
 
         public override void OnInspectorGUI()
@@ -45,12 +62,41 @@ namespace UnityEditor.UI
             SetShowNativeSize(false);
             NativeSizeButtonGUI();
 
+            //增加设置UVRect values的按钮
+            SetUVRect(false);
+            if (EditorGUILayout.BeginFadeGroup(m_SetUVRect.faded))
+            {
+                EditorGUILayout.BeginHorizontal();
+                {
+                    GUILayout.Space(EditorGUIUtility.labelWidth);
+                    if (GUILayout.Button(m_SetUVRectButtonContent, EditorStyles.miniButton))
+                    {
+                        foreach (RawImage rawImage in targets.Select(obj => obj as RawImage))
+                        {
+                            Undo.RecordObject(rawImage.rectTransform, "Set UVRect value");
+                            rawImage.SetUVRectValues();
+                            EditorUtility.SetDirty(rawImage);
+                        }
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+            EditorGUILayout.EndFadeGroup();
+
             serializedObject.ApplyModifiedProperties();
         }
 
         void SetShowNativeSize(bool instant)
         {
             base.SetShowNativeSize(m_Texture.objectReferenceValue != null, instant);
+        }
+
+        void SetUVRect(bool instant)
+        {
+            if (instant)
+                m_ShowNativeSize.value = m_Texture.objectReferenceValue != null;
+            else
+                m_ShowNativeSize.target = m_Texture.objectReferenceValue != null;
         }
 
         private static Rect Outer(RawImage rawImage)
