@@ -737,7 +737,23 @@ namespace UnityEngine.UI
 
         public virtual int layoutPriority { get { return 0; } }
 
-        public float maxHeight => throw new NotImplementedException();
+        public virtual float maxHeight
+        {
+            get
+            {
+                var settings = GetGenerationSettings(new Vector2(GetPixelAdjustedRect().size.x, 0.0f));
+                return cachedTextGeneratorForLayout.GetPreferredHeight(m_Text, settings) / pixelsPerUnit;
+            }
+        }
+
+        public virtual float maxWidth
+        {
+            get
+            {
+                var settings = GetGenerationSettings(Vector2.zero);
+                return cachedTextGeneratorForLayout.GetPreferredWidth(m_Text, settings) / pixelsPerUnit;
+            }
+        }
 
 #if UNITY_EDITOR
         public override void OnRebuildRequested()

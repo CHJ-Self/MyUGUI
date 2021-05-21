@@ -89,6 +89,7 @@ namespace UnityEngine.UI
         /// </remarks>
         float preferredHeight { get; }
 
+        float maxWidth { get; }
 
         float maxHeight { get; }
 

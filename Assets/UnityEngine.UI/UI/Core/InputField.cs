@@ -3175,6 +3175,26 @@ namespace UnityEngine.UI
         /// </summary>
         public virtual int layoutPriority { get { return 1; } }
 
-        public float maxHeight => throw new NotImplementedException();
+        public virtual float maxHeight
+        {
+            get
+            {
+                if (textComponent == null)
+                    return 0;
+                var settings = textComponent.GetGenerationSettings(new Vector2(textComponent.rectTransform.rect.size.x, 0.0f));
+                return textComponent.cachedTextGeneratorForLayout.GetPreferredHeight(m_Text, settings) / textComponent.pixelsPerUnit;
+            }
+        }
+
+        public virtual float maxWidth
+        {
+            get
+            {
+                if (textComponent == null)
+                    return 0;
+                var settings = textComponent.GetGenerationSettings(Vector2.zero);
+                return textComponent.cachedTextGeneratorForLayout.GetPreferredWidth(m_Text, settings) / textComponent.pixelsPerUnit;
+            }
+        }
     }
 }

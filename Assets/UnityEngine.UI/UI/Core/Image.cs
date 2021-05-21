@@ -1718,14 +1718,23 @@ namespace UnityEngine.UI
         {
             get
             {
-                return 30;
-                /*
                 if (activeSprite == null)
                     return 0;
                 if (type == Type.Sliced || type == Type.Tiled)
                     return Sprites.DataUtility.GetMinSize(activeSprite).y / pixelsPerUnit;
                 return activeSprite.rect.size.y / pixelsPerUnit;
-                */
+            }
+        }
+
+        public virtual float maxWidth
+        {
+            get
+            {
+                if (activeSprite == null)
+                    return 0;
+                if (type == Type.Sliced || type == Type.Tiled)
+                    return Sprites.DataUtility.GetMinSize(activeSprite).x / pixelsPerUnit;
+                return activeSprite.rect.size.x / pixelsPerUnit;
             }
         }
 

@@ -74,9 +74,9 @@ namespace UnityEngine.UI
         public static float GetPreferredWidth(RectTransform rect)
         {
             float max = Mathf.Max(GetLayoutProperty(rect, e => e.minWidth, 0), GetLayoutProperty(rect, e => e.preferredWidth, 0));
-            if(max > GetLayoutProperty(rect, e => e.maxHeight, 0))
+            if(max > GetLayoutProperty(rect, e => e.maxWidth, 0))
             {
-                return GetLayoutProperty(rect, e => e.maxHeight, 0);
+                return GetLayoutProperty(rect, e => e.maxWidth, 0);
             }
             return max;
         }

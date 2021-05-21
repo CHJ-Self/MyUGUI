@@ -1106,7 +1106,9 @@ namespace UnityEngine.UI
         /// </summary>
         public virtual int layoutPriority { get { return -1; } }
 
-        public virtual float maxHeight { get { return 100; } }
+        public virtual float maxWidth { get { return -1; } }
+
+        public virtual float maxHeight { get { return -1; } }
 
         public virtual void SetLayoutHorizontal()
         {

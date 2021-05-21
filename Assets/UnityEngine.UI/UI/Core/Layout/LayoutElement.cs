@@ -1,4 +1,5 @@
 using UnityEngine.EventSystems;
+using UnityEngine;
 
 namespace UnityEngine.UI
 {
@@ -16,6 +17,7 @@ namespace UnityEngine.UI
         [SerializeField] private float m_PreferredWidth = -1;
         [SerializeField] private float m_PreferredHeight = -1;
 
+        [SerializeField] private float m_MaxWidth = -1;
         [SerializeField] private float m_MaxHeight = -1;
 
         [SerializeField] private float m_FlexibleWidth = -1;
@@ -153,13 +155,9 @@ namespace UnityEngine.UI
         /// </example>
         public virtual float preferredHeight { get { return m_PreferredHeight; } set { if (SetPropertyUtility.SetStruct(ref m_PreferredHeight, value)) SetDirty(); } }
 
-
-
-
+        public virtual float maxWidth { get { return m_MaxWidth; } set { if (SetPropertyUtility.SetStruct(ref m_MaxWidth, value)) SetDirty(); } }
 
         public virtual float maxHeight { get { return m_MaxHeight; } set { if (SetPropertyUtility.SetStruct(ref m_MaxHeight, value)) SetDirty(); } }
-
-
 
 
         /// <summary>
