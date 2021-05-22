@@ -22,8 +22,8 @@ namespace UnityEngine.UI
 
         [TextArea(3, 10)][SerializeField] protected string m_Text = String.Empty;
 
-        private MyTextGenerator m_TextCache;
-        private MyTextGenerator m_TextCacheForLayout;
+        private TextGenerator m_TextCache;
+        private TextGenerator m_TextCacheForLayout;
 
         static protected Material s_DefaultText = null;
 
@@ -39,17 +39,17 @@ namespace UnityEngine.UI
         /// The cached TextGenerator used when generating visible Text.
         /// </summary>
 
-        public MyTextGenerator cachedTextGenerator
+        public TextGenerator cachedTextGenerator
         {
-            get { return m_TextCache ?? (m_TextCache = (m_Text.Length != 0 ? new MyTextGenerator(m_Text.Length) : new MyTextGenerator())); }
+            get { return m_TextCache ?? (m_TextCache = (m_Text.Length != 0 ? new TextGenerator(m_Text.Length) : new TextGenerator())); }
         }
 
         /// <summary>
         /// The cached TextGenerator used when determine Layout
         /// </summary>
-        public MyTextGenerator cachedTextGeneratorForLayout
+        public TextGenerator cachedTextGeneratorForLayout
         {
-            get { return m_TextCacheForLayout ?? (m_TextCacheForLayout = new MyTextGenerator()); }
+            get { return m_TextCacheForLayout ?? (m_TextCacheForLayout = new TextGenerator()); }
         }
 
         /// <summary>
@@ -509,23 +509,6 @@ namespace UnityEngine.UI
             }
         }
 
-        public float wordSpacing
-        {
-            get
-            {
-                return m_FontData.wordSpacing;
-            }
-            set
-            {
-                if (m_FontData.wordSpacing == value)
-                    return;
-                m_FontData.wordSpacing = value;
-
-                SetVerticesDirty();
-                SetLayoutDirty();
-            }
-        }
-
         /// <summary>
         /// Font style used by the Text's text.
         /// </summary>
@@ -608,9 +591,9 @@ namespace UnityEngine.UI
         /// </summary>
         /// <param name="extents">The extents the text can draw in.</param>
         /// <returns>Generated settings.</returns>
-        public MyTextGenerationSettings GetGenerationSettings(Vector2 extents)
+        public TextGenerationSettings GetGenerationSettings(Vector2 extents)
         {
-            var settings = new MyTextGenerationSettings();
+            var settings = new TextGenerationSettings();
 
             settings.generationExtents = extents;
             if (font != null && font.dynamic)
@@ -629,7 +612,6 @@ namespace UnityEngine.UI
             settings.pivot = rectTransform.pivot;
             settings.richText = m_FontData.richText;
             settings.lineSpacing = m_FontData.lineSpacing;
-            settings.wordSpacing = m_FontData.wordSpacing;
             settings.fontStyle = m_FontData.fontStyle;
             settings.resizeTextForBestFit = m_FontData.bestFit;
             settings.updateBounds = false;

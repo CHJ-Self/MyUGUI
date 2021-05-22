@@ -279,7 +279,7 @@ namespace UnityEngine.UI
         protected int m_CaretSelectPosition = 0;
         private RectTransform caretRectTrans = null;
         protected UIVertex[] m_CursorVerts = null;
-        private MyTextGenerator m_InputTextCache;
+        private TextGenerator m_InputTextCache;
         private CanvasRenderer m_CachedInputRenderer;
         private bool m_PreventFontCallback = false;
         [NonSerialized] protected Mesh m_Mesh;
@@ -334,12 +334,12 @@ namespace UnityEngine.UI
             }
         }
 
-        protected MyTextGenerator cachedInputTextGenerator
+        protected TextGenerator cachedInputTextGenerator
         {
             get
             {
                 if (m_InputTextCache == null)
-                    m_InputTextCache = new MyTextGenerator();
+                    m_InputTextCache = new TextGenerator();
 
                 return m_InputTextCache;
             }
@@ -1404,7 +1404,7 @@ namespace UnityEngine.UI
             return new Vector2(pos.x, pos.y);
         }
 
-        private int GetUnclampedCharacterLineFromPosition(Vector2 pos, MyTextGenerator generator)
+        private int GetUnclampedCharacterLineFromPosition(Vector2 pos, TextGenerator generator)
         {
             if (!multiLine)
                 return 0;
@@ -1446,7 +1446,7 @@ namespace UnityEngine.UI
         /// <returns>Character index with in value.</returns>
         protected int GetCharacterIndexFromPosition(Vector2 pos)
         {
-            MyTextGenerator gen = m_TextComponent.cachedTextGenerator;
+            TextGenerator gen = m_TextComponent.cachedTextGenerator;
 
             if (gen.lineCount == 0)
                 return 0;
@@ -1928,7 +1928,7 @@ namespace UnityEngine.UI
                 caretSelectPositionInternal = caretPositionInternal = position;
         }
 
-        private int DetermineCharacterLine(int charPos, MyTextGenerator generator)
+        private int DetermineCharacterLine(int charPos, TextGenerator generator)
         {
             for (int i = 0; i < generator.lineCount - 1; ++i)
             {
@@ -2295,13 +2295,13 @@ namespace UnityEngine.UI
             return true;
         }
 
-        private static int GetLineStartPosition(MyTextGenerator gen, int line)
+        private static int GetLineStartPosition(TextGenerator gen, int line)
         {
             line = Mathf.Clamp(line, 0, gen.lines.Count - 1);
             return gen.lines[line].startCharIdx;
         }
 
-        private static int GetLineEndPosition(MyTextGenerator gen, int line)
+        private static int GetLineEndPosition(TextGenerator gen, int line)
         {
             line = Mathf.Max(line, 0);
             if (line + 1 < gen.lines.Count)
@@ -2563,7 +2563,7 @@ namespace UnityEngine.UI
 
             float width = m_CaretWidth;
             int adjustedPos = Mathf.Max(0, caretPositionInternal - m_DrawStart);
-            MyTextGenerator gen = m_TextComponent.cachedTextGenerator;
+            TextGenerator gen = m_TextComponent.cachedTextGenerator;
 
             if (gen == null)
                 return;
@@ -2646,7 +2646,7 @@ namespace UnityEngine.UI
             }
 
             endChar -= 1;
-            MyTextGenerator gen = m_TextComponent.cachedTextGenerator;
+            TextGenerator gen = m_TextComponent.cachedTextGenerator;
 
             if (gen.lineCount <= 0)
                 return;
