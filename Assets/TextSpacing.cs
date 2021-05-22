@@ -38,6 +38,7 @@ public class TextSpacing : BaseMeshEffect
     #endregion
 
     public float textSpacing = 1f;
+    public bool isNewLines = false;
     [HideInInspector]
     public RectTransform rectTransform;
     [HideInInspector]
@@ -69,28 +70,49 @@ public class TextSpacing : BaseMeshEffect
 
         var vertexs = new List<UIVertex>();
         vh.GetUIVertexStream(vertexs);
-        // var indexCount = vh.currentIndexCount;
 
         var lineTexts = text.text.Split('\n');
-
         var lines = new Line[lineTexts.Length];
 
         // 根据lines数组中各个元素的长度计算每一行中第一个点的索引，每个字、字母、空母均占6个点
         for (var i = 0; i < lines.Length; i++) {
             // 除最后一行外，vertexs对于前面几行都有回车符占了6个点
             if (i == 0) {
-                lines[i] = new Line(0, lineTexts[i].Length + 1);
-            } else if (i > 0 && i < lines.Length - 1) {
-                lines[i] = new Line(lines[i - 1].EndVertexIndex + 1, lineTexts[i].Length + 1);
-            } else {
+                lines[i] = new Line(0, lineTexts[i].Length);
+            }
+            else if (i > 0 && i < lines.Length - 1) {
+                lines[i] = new Line(lines[i - 1].EndVertexIndex + 1, lineTexts[i].Length);
+            } 
+            else {
                 lines[i] = new Line(lines[i - 1].EndVertexIndex + 1, lineTexts[i].Length);
             }
         }
 
         UIVertex vt;
+        int maxWordCount;
+        int lastLineIndex;
+        float ratio = 0;
 
-        float originPosX = vertexs[lines[0].StartVertexIndex].position.x;
+        if (text.horizontalOverflow == HorizontalWrapMode.Wrap && !isNewLines)
+        {
+            if (text.fontSize == 0)
+            {
+                maxWordCount = int.MaxValue;
+            }
+            else
+            {
+                maxWordCount = (int)rectTransform.sizeDelta.x / text.fontSize;
+            }
+        }
+        else
+        {
+            maxWordCount = int.MaxValue;
+        }
 
+        //防止maxWordCount为0（防止被除数为0）
+        maxWordCount = maxWordCount == 0 ? 1 : maxWordCount;
+
+        lastLineIndex = text.text.Length - text.text.Length % maxWordCount;
 
         for (var i = 0; i < lines.Length; i++) {
             for (var j = lines[i].StartVertexIndex; j <= lines[i].EndVertexIndex; j++) {
@@ -100,27 +122,78 @@ public class TextSpacing : BaseMeshEffect
 
                 vt = vertexs[j];
 
-                var charCount = lines[i].EndVertexIndex - lines[i].StartVertexIndex;
-                if (i == lines.Length - 1) {
-                    charCount += 6;
-                }
+                int currentVertInCharIndex = (j - lines[i].StartVertexIndex) / 6;//当前顶点对应字符在整短文本中的位置下标
 
-                if (alignment == HorizontalAligmentType.Left) {
-                    vt.position += new Vector3(textSpacing * ((j - lines[i].StartVertexIndex) / 6), 0, 0);
-                    /*
-                    if(vt.position.x - originPosX > rectTransform.sizeDelta.x)
+                if (alignment == HorizontalAligmentType.Left)
+                {
+                    if(isNewLines)
                     {
-                        //Debug.Log(vt.position);
+                        ratio = currentVertInCharIndex % lineTexts[i].Length;
                     }
-                    */
-                    //Debug.Log((j - lines[i].StartVertexIndex) / 6);
-                    Debug.Log(vt.position);
+                    else
+                    {
+                        ratio = currentVertInCharIndex % maxWordCount;
+                    }
+
+                    vt.position += new Vector3(textSpacing * ratio, 0, 0);
                 }
-                else if (alignment == HorizontalAligmentType.Right) {
-                    vt.position += new Vector3(textSpacing * (-(charCount - j + lines[i].StartVertexIndex) / 6 + 1), 0, 0);
-                } else if (alignment == HorizontalAligmentType.Center) {
-                    var offset = (charCount / 6) % 2 == 0 ? 0.5f : 0f;
-                    vt.position += new Vector3(textSpacing * ((j - lines[i].StartVertexIndex) / 6 - charCount / 12 + offset), 0, 0);
+                else if (alignment == HorizontalAligmentType.Right)
+                {
+                    if (isNewLines)
+                    {
+                        ratio = lineTexts[i].Length - currentVertInCharIndex - 1;
+                    }
+                    else
+                    {
+                        int lineCount = currentVertInCharIndex / maxWordCount + 1;//当前warp模式下自动换行数，表示第几行
+                        
+                        //计算最后一行的情况
+                        if (currentVertInCharIndex >= lastLineIndex)
+                        {
+                            if (text.text.Length <= maxWordCount)
+                            {
+                                ratio = text.text.Length - currentVertInCharIndex - 1;
+                            }
+                            else
+                            {
+                                ratio = (text.text.Length - 1) % currentVertInCharIndex;
+                            }
+                        }
+                        else
+                        {
+                            ratio = (maxWordCount * lineCount - 1 - currentVertInCharIndex) % maxWordCount;
+                        }
+                        
+                    }
+
+                    vt.position -= new Vector3(textSpacing * ratio, 0, 0);
+                }
+                else if (alignment == HorizontalAligmentType.Center)
+                {
+                    if (isNewLines)
+                    {
+                        ratio = currentVertInCharIndex % lineTexts[i].Length - (lineTexts[i].Length / 2f - 0.5f);
+                    }
+                    else
+                    {
+                        //计算最后一行的情况
+                        if (currentVertInCharIndex >= lastLineIndex)
+                        {
+                            int lastLineCount = text.text.Length - lastLineIndex;
+                            float offset = 0;
+                            if(lastLineCount % 2 == 0 || maxWordCount % 2 != 0)
+                            {
+                                offset = 0.5f;
+                            }
+                            ratio = currentVertInCharIndex - lastLineIndex - (lastLineCount / 2 - offset);
+                        }
+                        else
+                        {
+                            ratio = currentVertInCharIndex % maxWordCount - (maxWordCount / 2 - 0.5f);
+                        }
+                    }
+
+                    vt.position += new Vector3(textSpacing * ratio, 0, 0);
                 }
 
                 vertexs[j] = vt;
