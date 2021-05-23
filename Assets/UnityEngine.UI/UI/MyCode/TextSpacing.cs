@@ -176,12 +176,13 @@ public class TextSpacing : BaseMeshEffect
                     }
                     else
                     {
+                        float offset = 0;
+
                         //计算最后一行的情况
                         if (currentVertInCharIndex >= lastLineIndex)
                         {
                             int lastLineCount = text.text.Length - lastLineIndex;
-                            float offset = 0;
-                            if(lastLineCount % 2 == 0 || maxWordCount % 2 != 0)
+                            if(lastLineCount % 2 == 0)
                             {
                                 offset = 0.5f;
                             }
@@ -189,10 +190,14 @@ public class TextSpacing : BaseMeshEffect
                         }
                         else
                         {
-                            ratio = currentVertInCharIndex % maxWordCount - (maxWordCount / 2 - 0.5f);
+                            if (maxWordCount % 2 == 0)
+                            {
+                                offset = 0.5f;
+                            }
+                            ratio = currentVertInCharIndex % maxWordCount - (maxWordCount / 2 - offset);
                         }
                     }
-
+                    print(ratio);
                     vt.position += new Vector3(textSpacing * ratio, 0, 0);
                 }
 
