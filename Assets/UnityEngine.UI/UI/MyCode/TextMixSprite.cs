@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(MeshRenderer))]
+[RequireComponent(typeof(MeshFilter))]
 public class TextMixSprite : BaseMeshEffect
 {
     public Sprite[] textures;
@@ -70,24 +72,20 @@ public class TextMixSprite : BaseMeshEffect
             }
         }
         */
+        VertexHelper vertexHelper = new VertexHelper();
 
-        int index = vh.currentVertCount;
-        vh.AddVert(new Vector3(-80, 15, 0), text.color, new Vector2(0, 1));
-        vh.AddVert(new Vector3(-44, 15, 0), text.color, new Vector2(1, 1));
-        vh.AddVert(new Vector3(-44, -21, 0), text.color, new Vector2(1, 0));
-        vh.AddVert(new Vector3(-80, -21, 0), text.color, new Vector2(0, 0));
+        int index = 0;
+        vertexHelper.AddVert(new Vector3(-80, 15, 0), text.color, new Vector2(0, 1));
+        vertexHelper.AddVert(new Vector3(-44, 15, 0), text.color, new Vector2(1, 1));
+        vertexHelper.AddVert(new Vector3(-44, -21, 0), text.color, new Vector2(1, 0));
+        vertexHelper.AddVert(new Vector3(-80, -21, 0), text.color, new Vector2(0, 0));
 
-        vh.AddTriangle(index, index + 1, index + 3);
-        vh.AddTriangle(index + 3, index + 1, index + 2);
+        vertexHelper.AddTriangle(index, index + 1, index + 3);
+        vertexHelper.AddTriangle(index + 3, index + 1, index + 2);
+        GetComponent<MeshRenderer>().sharedMaterial.mainTexture = textures[1].texture;
 
-        //if(textures[1] != null)
-        {
-            //GetComponent<CanvasRenderer>().GetMaterial(0).mainTexture = textures[1].texture;
-            Material material = new Material(GetComponent<CanvasRenderer>().GetMaterial(0));
-            material.mainTexture = textures[1].texture;
-            GetComponent<MeshRenderer>().material = material;
-            vh.FillMesh(GetComponent<MeshFilter>().mesh);
-            
-        }
+        Mesh mesh = new Mesh();
+        vertexHelper.FillMesh(mesh);
+        GetComponent<MeshFilter>().mesh = mesh;
     }
 }

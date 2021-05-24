@@ -197,7 +197,7 @@ public class TextSpacing : BaseMeshEffect
                             ratio = currentVertInCharIndex % maxWordCount - (maxWordCount / 2 - offset);
                         }
                     }
-                    print(ratio);
+
                     vt.position += new Vector3(textSpacing * ratio, 0, 0);
                 }
 
