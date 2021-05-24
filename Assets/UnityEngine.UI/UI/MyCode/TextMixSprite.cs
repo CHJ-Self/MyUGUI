@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,7 +8,8 @@ using UnityEngine.UI;
 [RequireComponent(typeof(MeshFilter))]
 public class TextMixSprite : BaseMeshEffect
 {
-    public Sprite[] textures;
+    public Texture texture;
+    //public Color _color = Color.white;
 
     public override void ModifyMesh(VertexHelper vh)
     {
@@ -15,75 +17,85 @@ public class TextMixSprite : BaseMeshEffect
         {
             return;
         }
-
         var text = GetComponent<Text>();
-
-        UIVertex vt;
-        var vertexs = new List<UIVertex>();
+        string[] txts1 = text.text.Split(new string[] { "</color>" }, StringSplitOptions.None);
+        if (txts1.Length <= 1)
+        {
+            return;
+        }
+        var vertexs = new List<UIVertex>();        
         vh.GetUIVertexStream(vertexs);
 
-        string[] txts = text.text.Split(new string[] { "</color>" }, System.StringSplitOptions.None);
-        //print(txts.Length);
-
-        var lineTexts = text.text.Split('\n');
-        var lines = new TextSpacing.Line[lineTexts.Length];
-
-        // 根据lines数组中各个元素的长度计算每一行中第一个点的索引，每个字、字母、空母均占6个点
-        for (var i = 0; i < lines.Length; i++)
+        //Text组件的顶点数会有两种情况，一种是忽略富文本的顶点数，一种是计算富文本的顶点数，这里需要判断一下
+        //其中，一个改变color值的富文本占23个字符
+        bool isUseLessVertex = !(vertexs.Count == (text.text.Length + 1) * 6);
+        GetComponent<MeshFilter>().mesh = null;
+        int _index;
+        int charTotalLength = 0;
+        VertexHelper vertexHelper = new VertexHelper();
+        UIVertex vt;
+        int vert_index = 0;
+        Color alpha = new Color(1, 1, 1, 0);
+        int specialCharCount = 0;
+        for (int i = 0;i < txts1.Length - 1;i++)
         {
-            // 除最后一行外，vertexs对于前面几行都有回车符占了6个点
-            if (i == 0)
+            if (isUseLessVertex)
             {
-                lines[i] = new TextSpacing.Line(0, lineTexts[i].Length);
-            }
-            else if (i > 0 && i < lines.Length - 1)
-            {
-                lines[i] = new TextSpacing.Line(lines[i - 1].EndVertexIndex + 1, lineTexts[i].Length);
+                string _txt = txts1[i].Split('<')[0];
+                specialCharCount += _txt.Split(new string[] { "\n"," ","\t" }, StringSplitOptions.None).Length - 1;
+                _index = _txt.Length + charTotalLength - specialCharCount;
+                charTotalLength = _index + specialCharCount + 1;
+                /*
+                print("specialCharCount: " + specialCharCount);
+                print("index: " + _index);
+                print("charTotal: " + charTotalLength);
+                */
             }
             else
             {
-                lines[i] = new TextSpacing.Line(lines[i - 1].EndVertexIndex + 1, lineTexts[i].Length);
+                string _txt = txts1[i].Split('<')[0];
+                _index = _txt.Length + 15 + charTotalLength - _txt.Split(new string[] { "\n", " ", "\t" }, StringSplitOptions.None).Length + 1;
+                charTotalLength = _index + 9;
             }
-        }
-        /*
-        for (var i = 0; i < lines.Length; i++)
-        {
-            for (var j = lines[i].StartVertexIndex; j <= lines[i].EndVertexIndex; j++)
+
+            try
             {
-                if (j < 0 || j >= vertexs.Count)
+                //print((_index + 2 + (specialCharCount - 1) * 2) * 4);
+                /*
+                vertexHelper.AddVert(vertexs[(_index + 2 + (specialCharCount - 1) * 2) * 4].position, _color, new Vector2(0, 1));
+                vertexHelper.AddVert(vertexs[(_index + 2 + (specialCharCount - 1) * 2) * 4 + 1].position, _color, new Vector2(1, 1));
+                vertexHelper.AddVert(vertexs[(_index + 2 + (specialCharCount - 1) * 2) * 4 + 2].position, _color, new Vector2(1, 0));
+                vertexHelper.AddVert(vertexs[(_index + 2 + (specialCharCount - 1) * 2) * 4 + 4].position, _color, new Vector2(0, 0));
+                */
+                int a = 9;
+                vertexHelper.AddVert(new Vector3(-80,15,0), text.color, new Vector2(0, 1));
+                vertexHelper.AddVert(new Vector3(80, 15, 0), text.color, new Vector2(0, 1));
+                vertexHelper.AddVert(new Vector3(80, -15, 0), text.color, new Vector2(0, 1));
+                vertexHelper.AddVert(new Vector3(-80, -15, 0), text.color, new Vector2(0, 1));
+
+                for (int j = 0; j < 4; j++)
                 {
-                    continue;
+                    vt = vertexs[_index * 4 + j];
+                    vt.color = alpha;
+                    vh.SetUIVertex(vt, _index * 4 + j);
                 }
 
-                vt = vertexs[j];
-                
-                vertexs[j] = vt;
+                vertexHelper.AddTriangle(vert_index, vert_index + 1, vert_index + 3);
+                vertexHelper.AddTriangle(vert_index + 3, vert_index + 1, vert_index + 2);
 
-                // 以下注意点与索引的对应关系
-                if (j % 6 <= 2)
-                {
-                    vh.SetUIVertex(vt, (j / 6) * 4 + j % 6);
-                }
-
-                if (j % 6 == 4)
-                {
-                    vh.SetUIVertex(vt, (j / 6) * 4 + j % 6 - 1);
-                }
+                vert_index += 4;
+            }
+            catch(ArgumentOutOfRangeException e)
+            {
+                Debug.LogError(e);
+                return;
             }
         }
-        */
-        VertexHelper vertexHelper = new VertexHelper();
 
-        int index = 0;
-        vertexHelper.AddVert(new Vector3(-80, 15, 0), text.color, new Vector2(0, 1));
-        vertexHelper.AddVert(new Vector3(-44, 15, 0), text.color, new Vector2(1, 1));
-        vertexHelper.AddVert(new Vector3(-44, -21, 0), text.color, new Vector2(1, 0));
-        vertexHelper.AddVert(new Vector3(-80, -21, 0), text.color, new Vector2(0, 0));
-
-        vertexHelper.AddTriangle(index, index + 1, index + 3);
-        vertexHelper.AddTriangle(index + 3, index + 1, index + 2);
-        GetComponent<MeshRenderer>().sharedMaterial.mainTexture = textures[1].texture;
-
+        if (texture != null)
+        {
+            GetComponent<MeshRenderer>().sharedMaterial.mainTexture = texture;
+        }
         Mesh mesh = new Mesh();
         vertexHelper.FillMesh(mesh);
         GetComponent<MeshFilter>().mesh = mesh;
