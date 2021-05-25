@@ -111,7 +111,7 @@ namespace UnityEngine.UI
 
         public virtual float maxHeight { get { return GetTotalPreferredSize(1); } }
 
-        public virtual float maxWidth { get { return GetTotalPreferredSize(1); } }
+        public virtual float maxWidth { get { return GetTotalPreferredSize(0); } }
 
         /// <summary>
         /// See LayoutElement.flexibleHeight

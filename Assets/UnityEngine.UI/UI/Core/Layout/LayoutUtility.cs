@@ -74,9 +74,9 @@ namespace UnityEngine.UI
         public static float GetPreferredWidth(RectTransform rect)
         {
             float max = Mathf.Max(GetLayoutProperty(rect, e => e.minWidth, 0), GetLayoutProperty(rect, e => e.preferredWidth, 0));
-            if(max > GetLayoutProperty(rect, e => e.maxWidth, 0))
+            if(max > GetLayoutProperty(rect, e => e.maxWidth, int.MaxValue))
             {
-                return GetLayoutProperty(rect, e => e.maxWidth, 0);
+                return GetLayoutProperty(rect, e => e.maxWidth, int.MaxValue);
             }
             return max;
         }
@@ -115,9 +115,9 @@ namespace UnityEngine.UI
         public static float GetPreferredHeight(RectTransform rect)
         {
             float max = Mathf.Max(GetLayoutProperty(rect, e => e.minHeight, 0), GetLayoutProperty(rect, e => e.preferredHeight, 0));
-            if(max > GetLayoutProperty(rect, e => e.maxHeight, 100))
+            if(max > GetLayoutProperty(rect, e => e.maxHeight, int.MaxValue))
             {
-                return GetLayoutProperty(rect, e => e.maxHeight, 100);
+                return GetLayoutProperty(rect, e => e.maxHeight, int.MaxValue);
             }
             return max;
         }
