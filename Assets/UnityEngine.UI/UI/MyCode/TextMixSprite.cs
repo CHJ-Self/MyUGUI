@@ -44,34 +44,26 @@ public class TextMixSprite : BaseMeshEffect
                 string _txt = txts1[i].Split('<')[0];
                 specialCharCount += _txt.Split(new string[] { "\n"," ","\t" }, StringSplitOptions.None).Length - 1;
                 _index = _txt.Length + charTotalLength - specialCharCount;
-                charTotalLength = _index + specialCharCount + 1;
-                /*
-                print("specialCharCount: " + specialCharCount);
-                print("index: " + _index);
-                print("charTotal: " + charTotalLength);
-                */
+                charTotalLength = _index + specialCharCount + 1;                
             }
             else
             {
                 string _txt = txts1[i].Split('<')[0];
-                _index = _txt.Length + 15 + charTotalLength - _txt.Split(new string[] { "\n", " ", "\t" }, StringSplitOptions.None).Length + 1;
+                specialCharCount += _txt.Split(new string[] { "\n", " ", "\t" }, StringSplitOptions.None).Length - 1;
+                _index = _txt.Length + 15 + charTotalLength;
                 charTotalLength = _index + 9;
             }
-
+            /*
+            print("specialCharCount: " + specialCharCount);
+            print("index: " + _index);
+            print("charTotal: " + charTotalLength);
+            */
             try
             {
-                //print((_index + 2 + (specialCharCount - 1) * 2) * 4);
-                /*
-                vertexHelper.AddVert(vertexs[(_index + 2 + (specialCharCount - 1) * 2) * 4].position, _color, new Vector2(0, 1));
-                vertexHelper.AddVert(vertexs[(_index + 2 + (specialCharCount - 1) * 2) * 4 + 1].position, _color, new Vector2(1, 1));
-                vertexHelper.AddVert(vertexs[(_index + 2 + (specialCharCount - 1) * 2) * 4 + 2].position, _color, new Vector2(1, 0));
-                vertexHelper.AddVert(vertexs[(_index + 2 + (specialCharCount - 1) * 2) * 4 + 4].position, _color, new Vector2(0, 0));
-                */
-                int a = 9;
-                vertexHelper.AddVert(new Vector3(-80,15,0), text.color, new Vector2(0, 1));
-                vertexHelper.AddVert(new Vector3(80, 15, 0), text.color, new Vector2(0, 1));
-                vertexHelper.AddVert(new Vector3(80, -15, 0), text.color, new Vector2(0, 1));
-                vertexHelper.AddVert(new Vector3(-80, -15, 0), text.color, new Vector2(0, 1));
+                vertexHelper.AddVert(vertexs[_index * 6].position, text.color, new Vector2(0, 1));
+                vertexHelper.AddVert(vertexs[_index * 6 + 1].position, text.color, new Vector2(1, 1));
+                vertexHelper.AddVert(vertexs[_index * 6 + 2].position, text.color, new Vector2(1, 0));
+                vertexHelper.AddVert(vertexs[_index * 6 + 4].position, text.color, new Vector2(0, 0));
 
                 for (int j = 0; j < 4; j++)
                 {
