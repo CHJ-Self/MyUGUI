@@ -7,21 +7,29 @@ using UnityEngine.UI;
 public class CurveSliding : MonoBehaviour
 {
     public Transform posListRoot;
-    public bool isControlChildWidth = false;
-    public bool isControlChildHeight = false;
+    public float contentwidth;
+    public bool isChangeHierarchy = false;
 
     private ScrollRect scrollRect;
-    private Transform content;
+    private RectTransform content;
+    private List<Transform> posTransformList = new List<Transform>();
     private List<RectTransform> item_transformList = new List<RectTransform>();
     private List<float> posX_List = new List<float>();
+    private List<float> distanceList = new List<float>();
     private float scrollRectWidth;
     private float scrollRectHeight;
-    private float contentPosX;
+    private float posTotalDistance;
+    private float spacing = 0;
 
     private void Start()
     {
         scrollRect = GetComponent<ScrollRect>();
-        content = scrollRect.content.transform;
+        content = scrollRect.content.transform as RectTransform;
+        HorizontalLayoutGroup contentLayoutGroup = content.GetComponentsInChildren<HorizontalLayoutGroup>(true)[0];
+        if(contentLayoutGroup != null && contentLayoutGroup.name == content.name)
+        {
+            spacing = contentLayoutGroup.spacing;
+        }
         scrollRectWidth = scrollRect.GetComponent<RectTransform>().sizeDelta.x;
         scrollRectHeight = scrollRect.GetComponent<RectTransform>().sizeDelta.y;
         for (int i = 0; i < content.childCount; i++)
@@ -30,37 +38,28 @@ public class CurveSliding : MonoBehaviour
             if (item_transform.gameObject.activeInHierarchy)
             {
                 item_transformList.Add(item_transform);
+                posX_List.Add(item_transform.localPosition.x);
             }
             else
             {
                 continue;
             }
-           /*
-            HorizontalLayoutGroup horizontalLayoutGroup = content.GetComponent<HorizontalLayoutGroup>();
-            VerticalLayoutGroup verticalLayoutGroup = content.GetComponent<VerticalLayoutGroup>();
-            ContentSizeFitter contentSizeFitter = content.GetComponent<ContentSizeFitter>();
-            if (contentSizeFitter != null && contentSizeFitter.enabled)
-            {
-                contentSizeFitter.enabled = false;
-            }
-            if (horizontalLayoutGroup != null && horizontalLayoutGroup.enabled)
-            {
-                horizontalLayoutGroup.enabled = false;
-            }
-            if (verticalLayoutGroup != null && verticalLayoutGroup.enabled)
-            {
-                verticalLayoutGroup.enabled = false;
-            }
-           */
-            
         }
+        float totalDistance = 0;
         for(int i = 0;i < posListRoot.childCount;i++)
         {
-            posX_List.Add(posListRoot.GetChild(i).transform.localPosition.x);
+            Transform posTransform = posListRoot.GetChild(i);
+            if (i > 0)
+            {
+                Transform previousPosTransform = posListRoot.GetChild(i - 1);
+                totalDistance += Vector3.Distance(posTransform.localPosition, previousPosTransform.localPosition);
+            }
+            posTransformList.Add(posTransform);
+            distanceList.Add(totalDistance);
         }
-
+        posTotalDistance = distanceList[distanceList.Count - 1];
+        content.sizeDelta = new Vector2(contentwidth, content.sizeDelta.y);
         OnValueChange(Vector2.zero);
-
         scrollRect.onValueChanged.AddListener(OnValueChange);
     }
 
@@ -68,16 +67,17 @@ public class CurveSliding : MonoBehaviour
     {
         for(int i = 0;i < item_transformList.Count;i++)
         {
-            float posX = item_transformList[i].anchoredPosition.x + content.localPosition.x;
+            float localPosX = posX_List[i];
+            float posX = localPosX + content.anchoredPosition.x;
             //如果当前节点的位置 - content的X轴偏移值 > 滑动列表的宽度，则说明当前item在可视范围外
-            if(posX > scrollRectWidth / 2 + 200 || posX < -scrollRectWidth / 2 - 200)
+            if (posX > posTotalDistance + 200 || posX < 0)
             {
                 continue;
             }
             int index = -1;
-            foreach(var posX_inlist in posX_List)
+            foreach(var totalDistance in distanceList)
             {
-                if(posX < posX_inlist)
+                if(posX < totalDistance)
                 {
                     break;
                 }
@@ -89,12 +89,10 @@ public class CurveSliding : MonoBehaviour
             //如果index+1小于位置列表的数量，则其在位置区间内，否则应该在位置区间外
             if (index + 1 < posListRoot.childCount && index + 1 > 0)
             {
-                float previousPoint_to_currentPoint_distance = posX - posX_List[index];
-                float previousPoint_to_nextPoint_distance = posX_List[index + 1] - posX_List[index];
-                float ratio = previousPoint_to_currentPoint_distance / previousPoint_to_nextPoint_distance;
-                Vector3 newPos = posListRoot.GetChild(index).localPosition - ratio * (posListRoot.GetChild(index).localPosition - posListRoot.GetChild(index + 1).localPosition);
-                item_transformList[i].localPosition = new Vector3(item_transformList[i].localPosition.x, -scrollRectHeight / 2 + newPos.y, 0);
-                
+                float ratio = (posX - distanceList[index]) / (distanceList[index + 1] - distanceList[index]);
+                Vector3 newPos = posTransformList[index].localPosition - ratio * (posTransformList[index].localPosition - posTransformList[index + 1].localPosition);
+                item_transformList[i].localPosition = new Vector3(newPos.x + scrollRectWidth/2 - content.anchoredPosition.x, -scrollRectHeight / 2 + newPos.y, 0);
+
             }
             else if(index <= -1)
             {
@@ -102,7 +100,16 @@ public class CurveSliding : MonoBehaviour
             }
             else if(index >= posListRoot.childCount - 1)
             {
-                item_transformList[i].localPosition = new Vector3(item_transformList[i].localPosition.x, -scrollRectHeight / 2 + posListRoot.GetChild(posListRoot.childCount - 1).localPosition.y, 0);
+                if (i < 1)
+                {
+                    continue;
+                }
+                RectTransform previousItem_RectTransform = item_transformList[i - 1];
+                item_transformList[i].localPosition = new Vector3(previousItem_RectTransform.localPosition.x + spacing + previousItem_RectTransform.sizeDelta.x/2 + item_transformList[i].sizeDelta.x/2, -scrollRectHeight / 2 + posListRoot.GetChild(posListRoot.childCount - 1).localPosition.y, 0);
+            }
+            if (isChangeHierarchy)
+            {
+                item_transformList[i].SetAsFirstSibling();
             }
         }
     }
