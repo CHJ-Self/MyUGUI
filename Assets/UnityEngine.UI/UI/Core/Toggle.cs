@@ -29,7 +29,12 @@ namespace UnityEngine.UI
             /// <summary>
             /// Fade the toggle in / out smoothly.
             /// </summary>
-            Fade
+            Fade,
+
+            /// <summary>
+            /// Sets the checkmark's gameobject active true / false
+            /// </summary>
+            SetActive
         }
 
         [Serializable]
@@ -268,6 +273,12 @@ namespace UnityEngine.UI
             // Controls like Dropdown rely on this.
             // It's up to the user to ignore a selection being set to the same value it already was, if desired.
             PlayEffect(toggleTransition == ToggleTransition.None);
+
+            if(toggleTransition == ToggleTransition.SetActive)
+            {
+                graphic.gameObject.SetActive(value);
+            }
+
             if (sendCallback)
             {
                 UISystemProfilerApi.AddMarker("Toggle.value", this);
