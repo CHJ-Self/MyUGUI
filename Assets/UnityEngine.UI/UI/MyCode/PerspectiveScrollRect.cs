@@ -14,6 +14,7 @@ public class PerspectiveScrollRect : MonoBehaviour
         scrollRect = GetComponent<ScrollRect>();
         perspectiveImages = GetComponentsInChildren<PerspectiveImage>();
         scrollRect.onValueChanged.AddListener(UpdataChilds);
+        UpdataChilds(Vector2.zero);
     }
 
     /// <summary>
