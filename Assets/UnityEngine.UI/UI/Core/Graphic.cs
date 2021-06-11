@@ -692,6 +692,11 @@ namespace UnityEngine.UI
             s_VertexHelper.FillMesh(m);
         }
 
+        public void OnPopulateMesh_Public(VertexHelper toFill)
+        {
+            OnPopulateMesh(toFill);
+        }
+
         /// <summary>
         /// Callback function when a UI element needs to generate vertices. Fills the vertex buffer data.
         /// </summary>
