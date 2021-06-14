@@ -1,6 +1,6 @@
 ﻿// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
-Shader "pjg/ui/ui_image_vertex"
+Shader "MyShader/ui_perspective"
 {
     Properties
     {
@@ -88,7 +88,7 @@ Shader "pjg/ui/ui_image_vertex"
                 OUT.worldPosition = v.vertex;
 
 				//OUT.worldPosition.x += (_CenterY - v.vertex.y) / 1000 * (v.vertex.x - _CenterX) * _OffsetX;
-                OUT.worldPosition.x += (-v.vertex.y - _OffsetX) / 1000 * v.vertex.x * _OffsetPerspective;
+                OUT.worldPosition.x += (_CenterY + v.vertex.y - _OffsetX) / 1000 * (v.vertex.x - _CenterX) * _OffsetPerspective;
 
                 OUT.vertex = UnityObjectToClipPos(OUT.worldPosition);
 
