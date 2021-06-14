@@ -74,7 +74,9 @@ public class PerspectiveScrollRect : MonoBehaviour
                 offset_right = -perspective_left * distanceVector.x / 100f;
             }
             Image[] images = item.GetComponentsInChildren<Image>();
+            Text[] texts = item.GetComponentsInChildren<Text>();
             ModifyImagesInItem(offset_left, offset_right, images, item.sizeDelta.y);
+            ModifyTextsInItem(offset_left, offset_right, texts, item.sizeDelta.y);
         }
 
     }
@@ -123,6 +125,62 @@ public class PerspectiveScrollRect : MonoBehaviour
             graphic.canvasRenderer.SetMesh(mesh);
             MeshCollider meshCollider = graphic.GetComponent<MeshCollider>();
             if(meshCollider != null)
+            {
+                meshCollider.sharedMesh = mesh;
+            }
+        }
+    }
+
+    public void ModifyTextsInItem(float offset_left, float offset_right, Text[] texts, float itemHeight)
+    {
+        VertexHelper vh = new VertexHelper();
+        for (int i = 0; i < texts.Length; i++)
+        {
+            Graphic graphic = texts[i];
+            vh.Clear();
+            graphic.OnPopulateMesh_Public(vh);
+
+            var vertexs = new List<UIVertex>();
+            vh.GetUIVertexStream(vertexs);
+
+            UIVertex vt;
+            float ratio;
+            float graphicPosY = Mathf.Abs(graphic.rectTransform.localPosition.y);
+
+            int vert_index = 0;
+
+            for (int j = 0; j < vertexs.Count; j++)
+            {
+                //剔除不必要的顶点
+                if((j - 3) % 6 == 0 || (j - 5) % 6 == 0)
+                {
+                    continue;
+                }
+
+                if((j - 0) % 6 == 0 || (j - 1) % 6 == 0)
+                {
+                    vt = vertexs[j];
+                    ratio = (Mathf.Abs(vt.position.y) + graphicPosY) / itemHeight;
+                    vt.position += new Vector3(offset_left * ratio, 0, 0);
+                    vh.SetUIVertex(vt, vert_index);
+                    vert_index++;
+                }
+
+                if((j - 2) % 6 == 0 || (j - 4) % 6 == 0)
+                {
+                    vt = vertexs[j];
+                    ratio = (Mathf.Abs(vt.position.y) + graphicPosY) / itemHeight;
+                    vt.position += new Vector3(offset_right * ratio, 0, 0);
+                    vh.SetUIVertex(vt, vert_index);
+                    vert_index++;
+                }
+            }
+
+            Mesh mesh = new Mesh();
+            vh.FillMesh(mesh);
+            graphic.canvasRenderer.SetMesh(mesh);
+            MeshCollider meshCollider = graphic.GetComponent<MeshCollider>();
+            if (meshCollider != null)
             {
                 meshCollider.sharedMesh = mesh;
             }
