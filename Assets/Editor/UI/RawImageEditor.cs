@@ -20,13 +20,14 @@ namespace UnityEditor.UI
         SerializedProperty m_UVRect;
         GUIContent m_UVRectContent;
 
+        //增加Set UVRect Value按钮及其Insprctor动画
         GUIContent m_SetUVRectButtonContent;
-        AnimBool m_SetUVRect;
+        AnimBool m_ShowSetUVRect;
 
         protected override void OnDisable()
         {
             base.OnDisable();
-            m_SetUVRect.valueChanged.RemoveListener(Repaint);
+            m_ShowSetUVRect.valueChanged.RemoveListener(Repaint);
         }
 
         protected override void OnEnable()
@@ -45,9 +46,9 @@ namespace UnityEditor.UI
 
             //增加根据当前节点宽高设置UVRect属性
             m_SetUVRectButtonContent = EditorGUIUtility.TrTextContent("Set UVRect Value", "Sets the values to UVRect.");
-            m_SetUVRect = new AnimBool(true);
-            m_SetUVRect.valueChanged.AddListener(Repaint);
-            SetUVRect(true);
+            m_ShowSetUVRect = new AnimBool(false);
+            m_ShowSetUVRect.valueChanged.AddListener(Repaint);
+            SetShowUVRect(true);
         }
 
         public override void OnInspectorGUI()
@@ -63,8 +64,8 @@ namespace UnityEditor.UI
             NativeSizeButtonGUI();
 
             //增加设置UVRect values的按钮
-            SetUVRect(false);
-            if (EditorGUILayout.BeginFadeGroup(m_SetUVRect.faded))
+            SetShowUVRect(false);
+            if (EditorGUILayout.BeginFadeGroup(m_ShowSetUVRect.faded))
             {
                 EditorGUILayout.BeginHorizontal();
                 {
@@ -91,12 +92,12 @@ namespace UnityEditor.UI
             base.SetShowNativeSize(m_Texture.objectReferenceValue != null, instant);
         }
 
-        void SetUVRect(bool instant)
+        void SetShowUVRect(bool instant)
         {
             if (instant)
-                m_ShowNativeSize.value = m_Texture.objectReferenceValue != null;
+                m_ShowSetUVRect.value = m_Texture.objectReferenceValue != null;
             else
-                m_ShowNativeSize.target = m_Texture.objectReferenceValue != null;
+                m_ShowSetUVRect.target = m_Texture.objectReferenceValue != null;
         }
 
         private static Rect Outer(RawImage rawImage)
