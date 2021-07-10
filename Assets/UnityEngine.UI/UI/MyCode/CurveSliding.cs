@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(ScrollRect))]
 public class CurveSliding : MonoBehaviour
 {
     public Transform posListRoot;
-    public float contentwidth;
+    public float contentwidth;              //必须自己设置的content实际长度
     public bool isChangeHierarchy = false;
 
     private ScrollRect scrollRect;

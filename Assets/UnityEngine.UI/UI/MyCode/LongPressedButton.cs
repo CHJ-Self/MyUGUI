@@ -1,17 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.EventSystems;
+﻿using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static UnityEngine.UI.Button;
 
 public class LongPressedButton : Selectable
 {
-    public int frames = 60;
-    public UnityEvent onClick = new UnityEvent();
-    public UnityEvent onLongPressBegin = new UnityEvent();
-    public UnityEvent onLongPress = new UnityEvent();
-    public UnityEvent onLongPressEnd = new UnityEvent();
+    public int frames = 120;
+    public ButtonClickedEvent onClick = new ButtonClickedEvent();
+    public ButtonClickedEvent onLongPressBegin = new ButtonClickedEvent();
+    public ButtonClickedEvent onLongPress = new ButtonClickedEvent();
+    public ButtonClickedEvent onLongPressEnd = new ButtonClickedEvent();
 
     private int timer = 0;
     private bool isDown = false;
@@ -20,7 +17,7 @@ public class LongPressedButton : Selectable
 
     public override void OnPointerDown(PointerEventData eventData)
     {
-        if(!isDown && !isLongPress)
+        if (!isDown && !isLongPress)
         {
             isDown = true;
         }
@@ -30,7 +27,9 @@ public class LongPressedButton : Selectable
     {
         if(!isLongPress)
         {
-            EventSystem.current.SetSelectedGameObject(this.gameObject);
+            // Selection tracking
+            if (IsInteractable() && navigation.mode != Navigation.Mode.None && EventSystem.current != null)
+                EventSystem.current.SetSelectedGameObject(gameObject, eventData);
             onClick.Invoke();
         }
         else
