@@ -10,16 +10,10 @@ public class PerspectiveScrollRect : MonoBehaviour
     public Vector3 uiCenterPoint = Vector3.zero;
 
     /// <summary>
-    /// 图片左边的回拉像素，每距离中心点100个像素往回拉的距离
+    /// 图片的回拉像素，每距离中心点100个像素往回拉的距离
     /// </summary>
     [Range(0,100)]
-    public float perspective_left = 0;
-
-    /// <summary>
-    /// 图片右边的回拉像素，每距离中心点100个像素往回拉的距离
-    /// </summary>
-    [Range(0, 100)]
-    public float perspective_right = 0;
+    public float perspective = 0;
 
     public ScrollRect scrollRect;
 
@@ -65,13 +59,13 @@ public class PerspectiveScrollRect : MonoBehaviour
             //distanceVector.x小于0则证明当前节点在中心点右边，设置的透视左右值需要反过来
             if (distanceVector.x < 0)
             {
-                offset_left = -perspective_left * distanceVector.x / 100f;
-                offset_right = -perspective_right * distanceVector.x / 100f;
+                offset_left = -perspective * distanceVector.x / 100f;
+                offset_right = -perspective * distanceVector.x / 100f;
             }
             else
             {
-                offset_left = -perspective_right * distanceVector.x / 100f;
-                offset_right = -perspective_left * distanceVector.x / 100f;
+                offset_left = -perspective * distanceVector.x / 100f;
+                offset_right = -perspective * distanceVector.x / 100f;
             }
             Image[] images = item.GetComponentsInChildren<Image>();
             Text[] texts = item.GetComponentsInChildren<Text>();
