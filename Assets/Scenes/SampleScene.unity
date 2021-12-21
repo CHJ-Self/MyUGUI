@@ -2174,8 +2174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &73311358
 MonoBehaviour:
@@ -6103,8 +6102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &341605891
 MonoBehaviour:
@@ -7295,6 +7293,36 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 413400637}
   m_CullTransparentMesh: 0
+--- !u!128 &414951867
+Font:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Arail
+  serializedVersion: 5
+  m_LineSpacing: 18.398438
+  m_DefaultMaterial: {fileID: 1690314842}
+  m_FontSize: 16
+  m_Texture: {fileID: 795683066}
+  m_AsciiStartOffset: 0
+  m_Tracking: 1
+  m_CharacterSpacing: 0
+  m_CharacterPadding: 1
+  m_ConvertCase: -2
+  m_CharacterRects: []
+  m_KerningValues: []
+  m_PixelScale: 0.1
+  m_FontData: 
+  m_Ascent: 14.484375
+  m_Descent: 0
+  m_DefaultStyle: 0
+  m_FontNames:
+  - Arail
+  m_FallbackFonts: []
+  m_FontRenderingMode: 0
+  m_UseLegacyBoundsCalculation: 0
+  m_ShouldRoundAdvanceValue: 1
 --- !u!1 &420807252
 GameObject:
   m_ObjectHideFlags: 0
@@ -8279,6 +8307,83 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 480796870}
+  m_CullTransparentMesh: 0
+--- !u!1 &483395846
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 483395847}
+  - component: {fileID: 483395849}
+  - component: {fileID: 483395848}
+  m_Layer: 5
+  m_Name: TextSpacingAutoWrap
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &483395847
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 483395846}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 960269844}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 179.77, y: -0}
+  m_SizeDelta: {x: 437.78503, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &483395848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 483395846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51138a788da9bb54dbb04bc2170b1fe5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 414951867}
+    m_FontSize: 22
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 2
+    m_MaxSize: 40
+    m_Alignment: 3
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: "\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A\u554A"
+--- !u!222 &483395849
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 483395846}
   m_CullTransparentMesh: 0
 --- !u!1 &491070898
 GameObject:
@@ -10609,8 +10714,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &607313226
 MonoBehaviour:
@@ -11218,7 +11322,7 @@ RectTransform:
   m_Children:
   - {fileID: 2108177785}
   m_Father: {fileID: 960269844}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -12167,8 +12271,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &729465720
 MonoBehaviour:
@@ -12400,8 +12503,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &747074666
 MonoBehaviour:
@@ -12926,6 +13028,51 @@ RectTransform:
   m_AnchoredPosition: {x: 95, y: -15}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!28 &795683066
+Texture2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Arail
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  serializedVersion: 2
+  m_Width: 0
+  m_Height: 0
+  m_CompleteImageSize: 0
+  m_MipsStripped: 0
+  m_TextureFormat: 4
+  m_MipCount: 1
+  m_IsReadable: 1
+  m_IsPreProcessed: 0
+  m_IgnoreMasterTextureLimit: 0
+  m_StreamingMipmaps: 0
+  m_StreamingMipmapsPriority: 0
+  m_VTOnly: 0
+  m_AlphaIsTransparency: 0
+  m_ImageCount: 0
+  m_TextureDimension: 2
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 0
+    m_WrapV: 0
+    m_WrapW: 0
+  m_LightmapFormat: 0
+  m_ColorSpace: 0
+  image data: 0
+  _typelessdata: 
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
 --- !u!1 &796446977
 GameObject:
   m_ObjectHideFlags: 0
@@ -14199,8 +14346,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &859697324
 MonoBehaviour:
@@ -15446,8 +15592,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &941832956
 MonoBehaviour:
@@ -15946,6 +16091,7 @@ RectTransform:
   - {fileID: 1510132791}
   - {fileID: 120947723}
   - {fileID: 835772041}
+  - {fileID: 483395847}
   - {fileID: 1671591220}
   - {fileID: 2088875890}
   - {fileID: 1280153195}
@@ -16702,8 +16848,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &995489071
 MonoBehaviour:
@@ -18955,8 +19100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &1108296153
 MonoBehaviour:
@@ -20070,7 +20214,7 @@ RectTransform:
   - {fileID: 2015963644}
   - {fileID: 64784959}
   m_Father: {fileID: 960269844}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -21009,7 +21153,7 @@ RectTransform:
   m_Children:
   - {fileID: 1757800863}
   m_Father: {fileID: 960269844}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -23106,8 +23250,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &1385887817
 MonoBehaviour:
@@ -23711,7 +23854,7 @@ RectTransform:
   - {fileID: 1591679287}
   - {fileID: 1282885785}
   m_Father: {fileID: 960269844}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -24140,7 +24283,7 @@ RectTransform:
   - {fileID: 516241324}
   - {fileID: 834356795}
   m_Father: {fileID: 960269844}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -26874,8 +27017,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &1576419630
 MonoBehaviour:
@@ -28333,7 +28475,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 960269844}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -28776,6 +28918,33 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1686121405}
   m_CullTransparentMesh: 0
+--- !u!21 &1690314842
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Arail
+  m_Shader: {fileID: 10101, guid: 0000000000000000e000000000000000, type: 0}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 795683066}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats: []
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []
 --- !u!1 &1692686969
 GameObject:
   m_ObjectHideFlags: 0
@@ -29927,7 +30096,7 @@ RectTransform:
   - {fileID: 1900875033}
   - {fileID: 1047797939}
   m_Father: {fileID: 960269844}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -30435,8 +30604,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &1791899560
 MonoBehaviour:
@@ -30787,8 +30955,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &1807047924
 MonoBehaviour:
@@ -30860,7 +31027,7 @@ RectTransform:
   - {fileID: 1697587830}
   - {fileID: 689029477}
   m_Father: {fileID: 960269844}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -31262,8 +31429,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &1832287109
 MonoBehaviour:
@@ -31655,8 +31821,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &1864490632
 MonoBehaviour:
@@ -33324,8 +33489,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &1968258334
 MonoBehaviour:
@@ -34047,7 +34211,7 @@ RectTransform:
   - {fileID: 834956942}
   - {fileID: 1320468167}
   m_Father: {fileID: 960269844}
-  m_RootOrder: 14
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -34735,8 +34899,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &2048825457
 MonoBehaviour:
@@ -35313,8 +35476,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!1 &2082964682
 GameObject:
@@ -35367,8 +35529,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &2082964685
 MonoBehaviour:
@@ -35602,7 +35763,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 960269844}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -36291,8 +36452,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 15
-  perspective_right: 15
+  perspective: 0
   scrollRect: {fileID: 680260318}
 --- !u!1 &2111615875
 GameObject:
@@ -36597,8 +36757,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiCenterPoint: {x: 0, y: 0, z: 0}
-  perspective_left: 0
-  perspective_right: 0
+  perspective: 0
   scrollRect: {fileID: 0}
 --- !u!114 &2133101517
 MonoBehaviour:
