@@ -64,17 +64,46 @@ public class TextSpacingAutoWrap : Text
         */
         #endregion
 
+        Vector2 extents = rectTransform.rect.size;
+        var settings = GetGenerationSettings(extents);
+        cachedTextGenerator.PopulateWithErrors(text, settings, gameObject);
+
+        // Apply the offset to the vertices
+        IList<UIVertex> verts = cachedTextGenerator.verts;
+        float unitsPerPixel = 1 / pixelsPerUnit;
+        int vertCount = verts.Count;
+
+        // We have no verts to process just return (case 1037923)
+        if (vertCount <= 0)
+        {
+            toFill.Clear();
+            return;
+        }
+
+        Vector2 roundingOffset = new Vector2(verts[0].position.x, verts[0].position.y) * unitsPerPixel;
+        roundingOffset = PixelAdjustPoint(roundingOffset) - roundingOffset;
+        Debug.Log("roungingOffset: " + roundingOffset);
+
+
+        //--------------------------------------------------------------------------------
+        //TODO 对比一下UGUI的方法和自定义方法输出的vert位置
+
+
         toFill.Clear();
         Vector3 pos = Vector3.zero;
-        
+        //pos = new Vector3(rectTransform.rect.xMin, rectTransform.rect.yMax - fontSize, 0);
+
+        //print(rectTransform.rect.xMin);
+        //print(rectTransform.rect.yMax);
+
         for (int i = 0; i < text.Length; i++)
         {
             // Get character rendering information from the font
             CharacterInfo ch;
 
             //TODO 研究动态字体和静态字体的区别
-            Font mfont = Font.CreateDynamicFontFromOSFont("Arail", 22);
-            mfont.RequestCharactersInTexture(text, 22);
+            Font mfont = Font.CreateDynamicFontFromOSFont("Arail", fontSize);
+            mfont.RequestCharactersInTexture(text, fontSize);
             mfont.GetCharacterInfo(text[i], out ch);
 
             UIVertex[] vertices = new UIVertex[4];
@@ -89,11 +118,28 @@ public class TextSpacingAutoWrap : Text
             vertices[2].position = pos + new Vector3(ch.maxX, ch.minY, 0);
             vertices[3].position = pos + new Vector3(ch.minX, ch.minY, 0);
 
-            vertices[0].uv0 = ch.uvTopLeft;
-            vertices[1].uv0 = ch.uvTopRight;
-            vertices[2].uv0 = ch.uvBottomRight;
-            vertices[3].uv0 = ch.uvBottomLeft;
+            //print(vertices[0].position);
 
+            //Vector2 adjustVector = Vector2.zero;
+            Vector2 adjustVector = new Vector2(0, 0.00f);
+
+            vertices[0].uv0 = ch.uvTopLeft + adjustVector;
+            vertices[1].uv0 = ch.uvTopRight + adjustVector;
+            vertices[2].uv0 = ch.uvBottomRight + adjustVector;
+            vertices[3].uv0 = ch.uvBottomLeft + adjustVector;
+            
+            /*
+            vertices[0].uv0 = vertices[0].position;
+            vertices[1].uv0 = vertices[1].position;
+            vertices[2].uv0 = vertices[2].position;
+            vertices[3].uv0 = vertices[3].position;
+            */
+            
+            Debug.Log(ch.uvTopLeft);
+            Debug.Log(ch.uvTopRight);
+            Debug.Log(ch.uvBottomRight);
+            Debug.Log(ch.uvBottomLeft);
+            
             vertices[0].color = color;
             vertices[1].color = color;
             vertices[2].color = color;
