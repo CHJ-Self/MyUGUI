@@ -32,5 +32,20 @@ namespace UnityEditor.UI
             RaycastControlsGUI();
             serializedObject.ApplyModifiedProperties();
         }
+
+        public override bool HasPreviewGUI() { return true; }
+
+        public override void OnPreviewGUI(Rect rect, GUIStyle background)
+        {
+            Text text = target as Text;
+            if (text == null) return;
+
+            Texture texture = text.mainTexture;
+            if (texture == null) return;
+
+            Sprite sprite = Sprite.Create(texture as Texture2D, new Rect(0,0,texture.width,texture.height), Vector2.zero);
+
+            SpriteDrawUtility.DrawSprite(sprite, rect, new Color(1,1,1,1));
+        }
     }
 }
