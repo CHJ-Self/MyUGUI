@@ -88,11 +88,11 @@ public class TextSpacingAutoWrap : Text
         */
         #endregion
 
-
+        
         Vector2 extents = rectTransform.rect.size;
         var settings = GetGenerationSettings(extents);
         cachedTextGenerator.PopulateWithErrors(text, settings, gameObject);
-
+        /*
         // Apply the offset to the vertices
         IList<UIVertex> verts = cachedTextGenerator.verts;
         float unitsPerPixel = 1 / pixelsPerUnit;
@@ -104,11 +104,11 @@ public class TextSpacingAutoWrap : Text
             toFill.Clear();
             return;
         }
-
+        
         Vector2 roundingOffset = new Vector2(verts[0].position.x, verts[0].position.y) * unitsPerPixel;
         roundingOffset = PixelAdjustPoint(roundingOffset) - roundingOffset;
         //Debug.Log("roungingOffset: " + roundingOffset);
-
+        */
         /*
         foreach(var vert in verts)
         {
@@ -125,6 +125,7 @@ public class TextSpacingAutoWrap : Text
         toFill.Clear();
 
         float currentLineTotalWidth = 0f;
+        float currentTotalHeight = 0f;
         int lineCount = 1;
         Vector3 startPos = Vector3.zero;
         List<float> totalWidthtList = new List<float>();
@@ -133,11 +134,17 @@ public class TextSpacingAutoWrap : Text
         Vector3 characterSpacingVector = new Vector3(m_characterSpacing, 0, 0);
 
         Font mfont = Font.CreateDynamicFontFromOSFont("Arail", fontSize);
-        mfont.RequestCharactersInTexture(text, fontSize);
+        mfont.RequestCharactersInTexture(text, fontSize, fontStyle);
         
         CharacterInfo ch_firstChar;
-        mfont.GetCharacterInfo(text[0], out ch_firstChar);
+        mfont.GetCharacterInfo(text[0], out ch_firstChar,fontSize, fontStyle);
         currentLineTotalWidth = ch_firstChar.advance;
+
+        currentTotalHeight = fontSize;
+        if(rectTransform.sizeDelta.y < currentTotalHeight)
+        {
+            return;
+        }
 
         List<CharacterInfo> characterInfoList = new List<CharacterInfo>();
         characterInfoList.Add(ch_firstChar);
@@ -147,7 +154,7 @@ public class TextSpacingAutoWrap : Text
             if (i + 1 < text.Length)
             {
                 CharacterInfo next_ch;
-                mfont.GetCharacterInfo(text[i + 1], out next_ch);
+                mfont.GetCharacterInfo(text[i + 1], out next_ch, fontSize, fontStyle);
                 characterInfoList.Add(next_ch);
 
                 if (text[i] == '\n')
@@ -155,14 +162,24 @@ public class TextSpacingAutoWrap : Text
                     lineCount++;
                     totalWidthtList.Add(currentLineTotalWidth);
                     currentLineTotalWidth = next_ch.advance;
+                    currentTotalHeight += lineSpacing + fontSize;
+                    if (verticalOverflow == VerticalWrapMode.Truncate && currentTotalHeight > rectTransform.sizeDelta.y)
+                    {
+                        break;
+                    }
                     continue;
                 }
-
-                if ((currentLineTotalWidth + next_ch.advance + m_characterSpacing) > rectTransform.sizeDelta.x)
+                //自动换行
+                if (horizontalOverflow == HorizontalWrapMode.Wrap && (currentLineTotalWidth + next_ch.advance + m_characterSpacing) > rectTransform.sizeDelta.x)
                 {
                     lineCount++;
                     totalWidthtList.Add(currentLineTotalWidth);
                     currentLineTotalWidth = next_ch.advance;
+                    currentTotalHeight += lineSpacing + fontSize;
+                    if (verticalOverflow == VerticalWrapMode.Truncate && currentTotalHeight > rectTransform.sizeDelta.y)
+                    {
+                        break;
+                    }
                 }
                 else
                 {
@@ -189,6 +206,7 @@ public class TextSpacingAutoWrap : Text
         //重置部分属性
         lineCount = 1;
         currentLineTotalWidth = ch_firstChar.advance;
+        currentTotalHeight = fontSize;
 
         startPos = GetStartPosition(lineCount, totalWidthtList);
 
@@ -225,6 +243,9 @@ public class TextSpacingAutoWrap : Text
             vertices[2].color = color;
             vertices[3].color = color;
 
+            if (text[i] != '\n')
+                toFill.AddUIVertexQuad(vertices);
+
             if (i + 1 < text.Length)
             {
                 CharacterInfo next_ch = characterInfoList[i + 1];
@@ -234,15 +255,25 @@ public class TextSpacingAutoWrap : Text
                     lineCount++;
                     currentLineTotalWidth = next_ch.advance;
                     startPos = GetStartPosition(lineCount, totalWidthtList);
+                    currentTotalHeight += lineSpacing + fontSize;
+                    if (verticalOverflow == VerticalWrapMode.Truncate && currentTotalHeight > rectTransform.sizeDelta.y)
+                    {
+                        break;
+                    }
                     continue;
                 }
 
-                //换行
-                if ((currentLineTotalWidth + next_ch.advance + m_characterSpacing) > rectTransform.sizeDelta.x)
+                //自动换行
+                if (horizontalOverflow == HorizontalWrapMode.Wrap && (currentLineTotalWidth + next_ch.advance + m_characterSpacing) > rectTransform.sizeDelta.x)
                 {
                     lineCount++;
                     currentLineTotalWidth = next_ch.advance;
                     startPos = GetStartPosition(lineCount, totalWidthtList);
+                    currentTotalHeight += lineSpacing + fontSize;
+                    if (verticalOverflow == VerticalWrapMode.Truncate && currentTotalHeight > rectTransform.sizeDelta.y)
+                    {
+                        break;
+                    }
                 }
                 else
                 {
@@ -263,8 +294,6 @@ public class TextSpacingAutoWrap : Text
                     continue;
                 }
             }
-
-            toFill.AddUIVertexQuad(vertices);
         }
 
         m_DisableFontTextureRebuiltCallback = false;
