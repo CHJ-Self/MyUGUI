@@ -12,6 +12,11 @@ public class TextSpacingAutoWrap : Text
         if (font == null)
             return;
 
+        if (text.Length <= 0)
+        {
+            return;
+        }
+
         // We don't care if we the font Texture changes while we are doing our Update.
         // The end result of cachedTextGenerator will be valid for this instance.
         // Otherwise we can get issues like Case 619238.
@@ -113,15 +118,17 @@ public class TextSpacingAutoWrap : Text
         */
         //--------------------------------------------------------------------------------
         //TODO 对比一下UGUI的方法和自定义方法输出的vert位置
-        //TODO 实现Alignment、LinsSpacing以及Overflow的情况
+        //TODO LinsSpacing以及Overflow的情况
         //TODO 看看Text是什么时候更新的Texture
+        //TODO 研究动态字体和静态字体的区别
 
         toFill.Clear();
 
         float currentLineTotalWidth = 0f;
         int lineCount = 1;
         Vector3 startPos = Vector3.zero;
-        startPos = new Vector3(rectTransform.rect.xMin, rectTransform.rect.yMax - fontSize * lineCount, 0);
+        List<float> totalWidthtList = new List<float>();
+        
         //定义字间距向量
         Vector3 characterSpacingVector = new Vector3(m_characterSpacing, 0, 0);
         Vector3 spacing = Vector3.zero;
@@ -132,13 +139,68 @@ public class TextSpacingAutoWrap : Text
         CharacterInfo ch_firstChar;
         mfont.GetCharacterInfo(text[0], out ch_firstChar);
         currentLineTotalWidth = ch_firstChar.advance;
-        
+
+        List<CharacterInfo> characterInfoList = new List<CharacterInfo>();
+        characterInfoList.Add(ch_firstChar);
+
+        for (int i = 0;i < text.Length;i++)
+        {
+            if (i + 1 < text.Length)
+            {
+                CharacterInfo next_ch;
+                mfont.GetCharacterInfo(text[i + 1], out next_ch);
+                characterInfoList.Add(next_ch);
+
+                if (text[i] == '\n')
+                {
+                    lineCount++;
+                    totalWidthtList.Add(currentLineTotalWidth - m_characterSpacing);
+                    currentLineTotalWidth = next_ch.advance;
+                    continue;
+                }
+
+                if ((currentLineTotalWidth + next_ch.advance + m_characterSpacing) > rectTransform.sizeDelta.x)
+                {
+                    lineCount++;
+                    totalWidthtList.Add(currentLineTotalWidth - m_characterSpacing);
+                    currentLineTotalWidth = next_ch.advance;
+                }
+                else
+                {
+                    if (!(text[i + 1] == '\n'))
+                    {
+                        currentLineTotalWidth += next_ch.advance + m_characterSpacing;
+                    }
+                }
+            }
+            else
+            {
+                if (text[i] == '\n')
+                {
+                    lineCount++;
+                    totalWidthtList.Add(currentLineTotalWidth - m_characterSpacing);
+                    currentLineTotalWidth = 0;
+                    continue;
+                }
+            }
+        }
+        //加上最后一行的字符宽度
+        totalWidthtList.Add(currentLineTotalWidth);
+
+        foreach(var i in totalWidthtList)
+        {
+            print(i);
+        }
+
+        //重置部分属性
+        lineCount = 1;
+        currentLineTotalWidth = ch_firstChar.advance;
+
+        startPos = GetStartPosition(lineCount, totalWidthtList);
+
         for (int i = 0; i < text.Length; i++)
         {
-            //TODO 研究动态字体和静态字体的区别
-
-            CharacterInfo ch;
-            mfont.GetCharacterInfo(text[i], out ch);
+            CharacterInfo ch = characterInfoList[i];
 
             UIVertex[] vertices = new UIVertex[4];
             vertices[0] = UIVertex.simpleVert;
@@ -169,23 +231,42 @@ public class TextSpacingAutoWrap : Text
             vertices[2].color = color;
             vertices[3].color = color;
 
-            if(i + 1 < text.Length)
+            if (i + 1 < text.Length)
             {
-                CharacterInfo next_ch;
-                mfont.GetCharacterInfo(text[i + 1], out next_ch);
+                CharacterInfo next_ch = characterInfoList[i + 1];
+                //适应换行符，如果当前字符是换行符，则直接进行换行操作
+                if (text[i] == '\n')
+                {
+                    lineCount++;
+                    currentLineTotalWidth = next_ch.advance;
+                    startPos = GetStartPosition(lineCount, totalWidthtList);
+                    continue;
+                }
 
+                //换行
                 if ((currentLineTotalWidth + next_ch.advance + m_characterSpacing) > rectTransform.sizeDelta.x)
                 {
                     lineCount++;
                     currentLineTotalWidth = next_ch.advance;
-                    spacing = Vector3.zero;
-                    startPos = new Vector3(rectTransform.rect.xMin, rectTransform.rect.yMax - fontSize * lineCount, 0) + spacing;
+                    startPos = GetStartPosition(lineCount, totalWidthtList);
                 }
                 else
                 {
-                    spacing += characterSpacingVector;
                     startPos += new Vector3(ch.advance, 0, 0) + characterSpacingVector;
-                    currentLineTotalWidth += next_ch.advance + m_characterSpacing;
+                    //适应换行符，如果下一个字符是换行符，则不需要增加当前行的字符总宽度
+                    if (!(text[i + 1] == '\n'))
+                    {
+                        currentLineTotalWidth += next_ch.advance + m_characterSpacing;
+                    }
+                }
+            }
+            else
+            {
+                if (text[i] == '\n')
+                {
+                    lineCount++;
+                    currentLineTotalWidth = 0;
+                    continue;
                 }
             }
 
@@ -193,6 +274,33 @@ public class TextSpacingAutoWrap : Text
         }
 
         m_DisableFontTextureRebuiltCallback = false;
+    }
+
+    private Vector3 GetStartPosition(int lineCount, List<float> totalWidthtList)
+    {
+        switch (alignment)
+        {
+            case TextAnchor.UpperLeft:
+                return new Vector3(rectTransform.rect.xMin, rectTransform.rect.yMax - fontSize * lineCount, 0);
+            case TextAnchor.UpperCenter:
+                return new Vector3(-totalWidthtList[lineCount - 1] / 2, rectTransform.rect.yMax - fontSize * lineCount, 0);
+            case TextAnchor.UpperRight:
+                return new Vector3(rectTransform.rect.xMin + rectTransform.sizeDelta.x - totalWidthtList[lineCount - 1], rectTransform.rect.yMax - fontSize * lineCount, 0);
+            case TextAnchor.MiddleLeft:
+                return new Vector3(rectTransform.rect.xMin, fontSize * totalWidthtList.Count / 2 - fontSize * lineCount, 0);
+            case TextAnchor.MiddleCenter:
+                return new Vector3(-totalWidthtList[lineCount - 1] / 2, fontSize * totalWidthtList.Count / 2 - fontSize * lineCount, 0);
+            case TextAnchor.MiddleRight:
+                return new Vector3(rectTransform.rect.xMin + rectTransform.sizeDelta.x - totalWidthtList[lineCount - 1], fontSize * totalWidthtList.Count / 2 - fontSize * lineCount, 0);
+            case TextAnchor.LowerLeft:
+                return new Vector3(rectTransform.rect.xMin, rectTransform.rect.yMax - fontSize * lineCount + (fontSize * totalWidthtList.Count - rectTransform.sizeDelta.y), 0);
+            case TextAnchor.LowerCenter:
+                return new Vector3(-totalWidthtList[lineCount - 1] / 2, rectTransform.rect.yMax - fontSize * lineCount + (fontSize * totalWidthtList.Count - rectTransform.sizeDelta.y), 0);
+            case TextAnchor.LowerRight:
+                return new Vector3(rectTransform.rect.xMin + rectTransform.sizeDelta.x - totalWidthtList[lineCount - 1], rectTransform.rect.yMax - fontSize * lineCount + (fontSize * totalWidthtList.Count - rectTransform.sizeDelta.y), 0);
+            default:
+                return Vector3.zero;
+        }
     }
 }
 
