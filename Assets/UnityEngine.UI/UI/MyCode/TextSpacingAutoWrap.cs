@@ -22,105 +22,13 @@ public class TextSpacingAutoWrap : Text
         // Otherwise we can get issues like Case 619238.
         m_DisableFontTextureRebuiltCallback = true;
 
-        #region UGUI.Text的OnPopulateMesh部分代码
-        /*
-        Vector2 extents = rectTransform.rect.size;
-
-        var settings = GetGenerationSettings(extents);
-        cachedTextGenerator.PopulateWithErrors(text, settings, gameObject);
-
-        // Apply the offset to the vertices
-        IList<UIVertex> verts = cachedTextGenerator.verts;
-        float unitsPerPixel = 1 / pixelsPerUnit;
-        int vertCount = verts.Count;
-        print(vertCount);
-        // We have no verts to process just return (case 1037923)
-        if (vertCount <= 0)
-        {
-            toFill.Clear();
-            return;
-        }
-
-        Vector2 roundingOffset = new Vector2(verts[0].position.x, verts[0].position.y) * unitsPerPixel;
-        roundingOffset = PixelAdjustPoint(roundingOffset) - roundingOffset;
-        toFill.Clear();
-        UIVertex[] m_tempVert = new UIVertex[4];
-        Vector3 spacing = new Vector3(5,0,0);
-        Vector3 currentSpacing = Vector3.zero;
-        if (roundingOffset != Vector2.zero)
-        {
-            for (int i = 0; i < vertCount; ++i)
-            {
-                int tempVertsIndex = i & 3;
-                m_tempVert[tempVertsIndex] = verts[i];
-                m_tempVert[tempVertsIndex].position *= unitsPerPixel;
-                m_tempVert[tempVertsIndex].position.x += roundingOffset.x;
-                m_tempVert[tempVertsIndex].position.y += roundingOffset.y;
-
-                if(i % 4 == 0)
-                {
-                    currentSpacing += spacing;
-                }
-                m_tempVert[tempVertsIndex].position += currentSpacing;
-
-                if (tempVertsIndex == 3)
-                    toFill.AddUIVertexQuad(m_tempVert);
-            }
-        }
-        else
-        {
-            for (int i = 0; i < vertCount; ++i)
-            {
-                int tempVertsIndex = i & 3;
-                m_tempVert[tempVertsIndex] = verts[i];
-                m_tempVert[tempVertsIndex].position *= unitsPerPixel;
-
-                if (i % 4 == 0)
-                {
-                    currentSpacing += spacing;
-                }
-                m_tempVert[tempVertsIndex].position += currentSpacing;
-
-                if (tempVertsIndex == 3)
-                    toFill.AddUIVertexQuad(m_tempVert);
-            }
-        }
-        */
-        #endregion
-
-        
         Vector2 extents = rectTransform.rect.size;
         var settings = GetGenerationSettings(extents);
         cachedTextGenerator.PopulateWithErrors(text, settings, gameObject);
-        /*
-        // Apply the offset to the vertices
-        IList<UIVertex> verts = cachedTextGenerator.verts;
-        float unitsPerPixel = 1 / pixelsPerUnit;
-        int vertCount = verts.Count;
 
-        // We have no verts to process just return (case 1037923)
-        if (vertCount <= 0)
-        {
-            toFill.Clear();
-            return;
-        }
-        
-        Vector2 roundingOffset = new Vector2(verts[0].position.x, verts[0].position.y) * unitsPerPixel;
-        roundingOffset = PixelAdjustPoint(roundingOffset) - roundingOffset;
-        //Debug.Log("roungingOffset: " + roundingOffset);
-        */
-        /*
-        foreach(var vert in verts)
-        {
-            Debug.Log(vert.position);
-        }
-        Debug.Log("---------------------------------------------");
-        */
         //--------------------------------------------------------------------------------
-        //TODO 对比一下UGUI的方法和自定义方法输出的vert位置
-        //TODO 实现Overflow以及其它Text的属性
+        //TODO 实现其它Text的属性
         //TODO 看看Text是什么时候更新的Texture
-        //TODO 研究动态字体和静态字体的区别
 
         toFill.Clear();
 
@@ -132,12 +40,10 @@ public class TextSpacingAutoWrap : Text
         
         //定义字间距向量
         Vector3 characterSpacingVector = new Vector3(m_characterSpacing, 0, 0);
-
-        Font mfont = Font.CreateDynamicFontFromOSFont("Arail", fontSize);
-        mfont.RequestCharactersInTexture(text, fontSize, fontStyle);
+        font.RequestCharactersInTexture(text, fontSize, fontStyle);
         
         CharacterInfo ch_firstChar;
-        mfont.GetCharacterInfo(text[0], out ch_firstChar,fontSize, fontStyle);
+        font.GetCharacterInfo(text[0], out ch_firstChar,fontSize, fontStyle);
         currentLineTotalWidth = ch_firstChar.advance;
 
         currentTotalHeight = fontSize;
@@ -154,7 +60,7 @@ public class TextSpacingAutoWrap : Text
             if (i + 1 < text.Length)
             {
                 CharacterInfo next_ch;
-                mfont.GetCharacterInfo(text[i + 1], out next_ch, fontSize, fontStyle);
+                font.GetCharacterInfo(text[i + 1], out next_ch, fontSize, fontStyle);
                 characterInfoList.Add(next_ch);
 
                 if (text[i] == '\n')
