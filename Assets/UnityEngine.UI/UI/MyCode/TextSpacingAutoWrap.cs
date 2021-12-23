@@ -118,7 +118,7 @@ public class TextSpacingAutoWrap : Text
         */
         //--------------------------------------------------------------------------------
         //TODO 对比一下UGUI的方法和自定义方法输出的vert位置
-        //TODO LinsSpacing以及Overflow的情况
+        //TODO 实现Overflow以及其它Text的属性
         //TODO 看看Text是什么时候更新的Texture
         //TODO 研究动态字体和静态字体的区别
 
@@ -131,7 +131,6 @@ public class TextSpacingAutoWrap : Text
         
         //定义字间距向量
         Vector3 characterSpacingVector = new Vector3(m_characterSpacing, 0, 0);
-        Vector3 spacing = Vector3.zero;
 
         Font mfont = Font.CreateDynamicFontFromOSFont("Arail", fontSize);
         mfont.RequestCharactersInTexture(text, fontSize);
@@ -154,7 +153,7 @@ public class TextSpacingAutoWrap : Text
                 if (text[i] == '\n')
                 {
                     lineCount++;
-                    totalWidthtList.Add(currentLineTotalWidth - m_characterSpacing);
+                    totalWidthtList.Add(currentLineTotalWidth);
                     currentLineTotalWidth = next_ch.advance;
                     continue;
                 }
@@ -162,7 +161,7 @@ public class TextSpacingAutoWrap : Text
                 if ((currentLineTotalWidth + next_ch.advance + m_characterSpacing) > rectTransform.sizeDelta.x)
                 {
                     lineCount++;
-                    totalWidthtList.Add(currentLineTotalWidth - m_characterSpacing);
+                    totalWidthtList.Add(currentLineTotalWidth);
                     currentLineTotalWidth = next_ch.advance;
                 }
                 else
@@ -178,7 +177,7 @@ public class TextSpacingAutoWrap : Text
                 if (text[i] == '\n')
                 {
                     lineCount++;
-                    totalWidthtList.Add(currentLineTotalWidth - m_characterSpacing);
+                    totalWidthtList.Add(currentLineTotalWidth);
                     currentLineTotalWidth = 0;
                     continue;
                 }
@@ -186,11 +185,6 @@ public class TextSpacingAutoWrap : Text
         }
         //加上最后一行的字符宽度
         totalWidthtList.Add(currentLineTotalWidth);
-
-        foreach(var i in totalWidthtList)
-        {
-            print(i);
-        }
 
         //重置部分属性
         lineCount = 1;
@@ -278,26 +272,32 @@ public class TextSpacingAutoWrap : Text
 
     private Vector3 GetStartPosition(int lineCount, List<float> totalWidthtList)
     {
+        int totalLineCount = totalWidthtList.Count;
+        float leftPosInRect = rectTransform.rect.xMin;
+        float upPosInRect = rectTransform.rect.yMax;
+        float halfLineWidth = totalWidthtList[lineCount - 1] / 2;
+        float rectTransformWidth = rectTransform.sizeDelta.x;
+        float rectTransformHeight = rectTransform.sizeDelta.y;
         switch (alignment)
         {
             case TextAnchor.UpperLeft:
-                return new Vector3(rectTransform.rect.xMin, rectTransform.rect.yMax - fontSize * lineCount, 0);
+                return new Vector3(leftPosInRect, upPosInRect - fontSize * lineCount - lineSpacing * (lineCount - 1), 0);
             case TextAnchor.UpperCenter:
-                return new Vector3(-totalWidthtList[lineCount - 1] / 2, rectTransform.rect.yMax - fontSize * lineCount, 0);
+                return new Vector3(-halfLineWidth, upPosInRect - fontSize * lineCount - lineSpacing * (lineCount - 1), 0);
             case TextAnchor.UpperRight:
-                return new Vector3(rectTransform.rect.xMin + rectTransform.sizeDelta.x - totalWidthtList[lineCount - 1], rectTransform.rect.yMax - fontSize * lineCount, 0);
+                return new Vector3(leftPosInRect + rectTransformWidth - totalWidthtList[lineCount - 1], upPosInRect - fontSize * lineCount - lineSpacing * (lineCount - 1), 0);
             case TextAnchor.MiddleLeft:
-                return new Vector3(rectTransform.rect.xMin, fontSize * totalWidthtList.Count / 2 - fontSize * lineCount, 0);
+                return new Vector3(leftPosInRect, (fontSize * totalLineCount + lineSpacing * (totalLineCount - 1)) / 2 - fontSize * lineCount, 0);
             case TextAnchor.MiddleCenter:
-                return new Vector3(-totalWidthtList[lineCount - 1] / 2, fontSize * totalWidthtList.Count / 2 - fontSize * lineCount, 0);
+                return new Vector3(-halfLineWidth, (fontSize * totalLineCount + lineSpacing * (totalLineCount - 1)) / 2 - fontSize * lineCount, 0);
             case TextAnchor.MiddleRight:
-                return new Vector3(rectTransform.rect.xMin + rectTransform.sizeDelta.x - totalWidthtList[lineCount - 1], fontSize * totalWidthtList.Count / 2 - fontSize * lineCount, 0);
+                return new Vector3(leftPosInRect + rectTransformWidth - totalWidthtList[lineCount - 1], (fontSize * totalLineCount + lineSpacing * (totalLineCount - 1)) / 2 - fontSize * lineCount, 0);
             case TextAnchor.LowerLeft:
-                return new Vector3(rectTransform.rect.xMin, rectTransform.rect.yMax - fontSize * lineCount + (fontSize * totalWidthtList.Count - rectTransform.sizeDelta.y), 0);
+                return new Vector3(leftPosInRect, upPosInRect - fontSize * lineCount + (fontSize * totalLineCount - rectTransformHeight) + lineSpacing * (totalLineCount - lineCount + 1), 0);
             case TextAnchor.LowerCenter:
-                return new Vector3(-totalWidthtList[lineCount - 1] / 2, rectTransform.rect.yMax - fontSize * lineCount + (fontSize * totalWidthtList.Count - rectTransform.sizeDelta.y), 0);
+                return new Vector3(-halfLineWidth, upPosInRect - fontSize * lineCount + (fontSize * totalLineCount - rectTransformHeight) + lineSpacing * (totalLineCount - lineCount + 1), 0);
             case TextAnchor.LowerRight:
-                return new Vector3(rectTransform.rect.xMin + rectTransform.sizeDelta.x - totalWidthtList[lineCount - 1], rectTransform.rect.yMax - fontSize * lineCount + (fontSize * totalWidthtList.Count - rectTransform.sizeDelta.y), 0);
+                return new Vector3(leftPosInRect + rectTransformWidth - totalWidthtList[lineCount - 1], upPosInRect - fontSize * lineCount + (fontSize * totalLineCount - rectTransformHeight) + lineSpacing * (totalLineCount - lineCount + 1), 0);
             default:
                 return Vector3.zero;
         }
