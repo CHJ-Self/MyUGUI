@@ -14,6 +14,7 @@ public class TextSpacingAutoWrap : Text
 
         if (text.Length <= 0)
         {
+            toFill.Clear();
             return;
         }
 
